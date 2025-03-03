@@ -2,7 +2,7 @@ import {Formik} from 'formik';
 import {Button, Col, Form, InputGroup, Row} from 'react-bootstrap';
 import React, {memo} from 'react';
 import {FormikConfig} from 'formik/dist/types';
-import {GroupContactsDto} from 'src/types/dto/GroupContactsDto';
+import {ApiGetGroupContactsType} from "src/api/apiContacts";
 
 export interface FilterFormValues {
   name: string,
@@ -10,7 +10,7 @@ export interface FilterFormValues {
 }
 
 interface FilterFormProps extends FormikConfig<Partial<FilterFormValues>> {
-  groupContactsList: GroupContactsDto[]
+  groupContactsList: ApiGetGroupContactsType[]
 }
 
 export const FilterForm = memo<FilterFormProps>(({
