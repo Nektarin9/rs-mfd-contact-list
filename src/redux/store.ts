@@ -1,18 +1,19 @@
-import {combineReducers, createStore, applyMiddleware, Store} from 'redux';
-import { thunk } from 'redux-thunk';
-import {appReducer, AppReducerType} from './appReducer/appReducer';
+import { configureStore } from '@reduxjs/toolkit';
+import { contactSlice } from "src/redux/contactSlice/contactSlice";
+import { contactApi } from "src/api/apiContacts";
 
-export interface ReducerState {
-    appReducer: AppReducerType
-}
-
-const rootReducer = combineReducers<RootState>({
-    appReducer: appReducer,
+export const store = configureStore({
+    reducer: {
+        /* Слайсы формы */
+        contact: contactSlice.reducer,
+        /* Запросы на сервер с формы */
+        [contactApi.reducerPath]: contactApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) => {
+        return getDefaultMiddleware({ serializableCheck: false }).concat(
+            contactApi.middleware,
+        );
+    },
 });
-
-export const store: Store = createStore(
-    rootReducer,
-    applyMiddleware(thunk)
-);
 
 export type RootState = ReturnType<typeof store.getState>;
