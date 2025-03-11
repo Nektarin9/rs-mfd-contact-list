@@ -1,10 +1,10 @@
 import React, {memo} from 'react';
 import {Card} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {GroupContactsDto} from 'src/types/dto/GroupContactsDto';
+import {ApiGetGroupContactsType} from "src/api/apiContacts";
 
 interface GroupContactsCardProps {
-  groupContacts: GroupContactsDto,
+  groupContacts: ApiGetGroupContactsType,
   withLink?: boolean
 }
 

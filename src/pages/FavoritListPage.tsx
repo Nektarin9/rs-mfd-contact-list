@@ -1,24 +1,34 @@
-import React, {memo, useEffect, useState} from 'react';
-import {CommonPageProps} from './types';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {ContactCard} from 'src/components/ContactCard';
-import {ContactDto} from 'src/types/dto/ContactDto';
+import {useDispatch, useSelector} from "react-redux";
+import {selectContacts} from "src/redux/appReducer/appSelectors";
+import {getContacts} from "src/redux/appReducer/appAction";
+import {AppDispatch} from "src/redux/appReducer/type";
 
-export const FavoritListPage = memo<CommonPageProps>(({
-  favoriteContactsState,
-  contactsState
-}) => {
-  const [contacts, setContacts] = useState<ContactDto[]>([])
+export const FavoritListPage = memo(() => {
+  const [isFavoritUpdate, setIsFavoritUpdate] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const contacts = useSelector(selectContacts);
+
   useEffect(() => {
-    setContacts(() => contactsState[0].filter(({id}) => favoriteContactsState[0].includes(id)));
-  }, [contactsState, favoriteContactsState])
+    dispatch(getContacts())
+  }, [isFavoritUpdate])
+
+  const updateFavorit = useCallback(() => {
+    setIsFavoritUpdate(prev => !prev);
+  }, [])
+
   return (
     <Row xxl={4} className="g-4">
-      {contacts.map((contact) => (
-        <Col key={contact.id}>
-          <ContactCard contact={contact} withLink />
-        </Col>
-      ))}
+      {contacts.map((contact) => {
+        if (contact.isFavorit) {
+          return (<Col key={contact.id}>
+            <ContactCard contact={contact} updateFavorit={updateFavorit} withLink />
+          </Col>)
+        }
+      }
+      )}
     </Row>
   );
 })
