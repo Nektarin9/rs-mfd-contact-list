@@ -1,6 +1,5 @@
-import {backendApiAxios} from "src/api/axiosConfig";
-import {AxiosResponse} from "axios";
 import {CONTACTS, GROUP_CONTACTS} from "src/api/path";
+import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
 
 export interface ApiGetContactsType {
@@ -21,21 +20,46 @@ export interface ApiGetGroupContactsType {
     contactIds: string[];
 }
 
-export class ApiContacts {
-    public static getContacts() : Promise<AxiosResponse<ApiGetContactsType[]>> {
-        return backendApiAxios.get(CONTACTS);
-    }
-    public static getContact(id: string) : Promise<AxiosResponse<ApiGetContactsType>> {
-        return backendApiAxios.get(`${CONTACTS}/${id}`);
-    }
-    public static getGroupContacts() : Promise<AxiosResponse<ApiGetGroupContactsType[]>> {
-        return backendApiAxios.get(GROUP_CONTACTS);
-    }
-    public static getGroupContact(id: string) : Promise<AxiosResponse<ApiGetGroupContactsType>> {
-        return backendApiAxios.get(`${GROUP_CONTACTS}/${id}`);
-    }
-    public static updateFavoriteContacts(isFavorit: boolean, id: string) : Promise<AxiosResponse<ApiGetContactsType>> {
-        return backendApiAxios.patch(`${CONTACTS}/${id}`, {isFavorit});
-    }
 
-}
+export const contactApi = createApi({
+    baseQuery: fetchBaseQuery({baseUrl: window.config?.api?.backendApi}),
+    reducerPath: 'contactApi',
+    tagTypes: ['Contact'],
+    endpoints: (build) => ({
+        //Получаем контакты
+        getContacts: build.query<ApiGetContactsType[], void>({
+            query: () => CONTACTS,
+            providesTags: ['Contact'],
+        }),
+        getContact: build.query<ApiGetContactsType, string>({
+            query: (id) => `${CONTACTS}/${id}`,
+            providesTags: ['Contact'],
+        }),
+        getGroupContacts: build.query<ApiGetGroupContactsType[], void>({
+            query: () => GROUP_CONTACTS,
+            providesTags: ['Contact'],
+        }),
+        getGroupContact: build.query<ApiGetGroupContactsType, string>({
+            query: (id) => `${GROUP_CONTACTS}/${id}`,
+            providesTags: ['Contact'],
+        }),
+
+        // Изменяем контакты
+        changeFavorit: build.mutation<ApiGetContactsType, Partial<{id: string | number; data: { isFavorit: boolean}}>>({
+            query: ({id, data}) => ({
+                url: `${CONTACTS}/${id}`,
+                method: 'PATCH',
+                body: data,
+            }),
+            invalidatesTags: ['Contact'],
+        }),
+    }),
+});
+
+export const {
+    useGetContactsQuery,
+    useGetContactQuery,
+    useGetGroupContactsQuery,
+    useGetGroupContactQuery,
+    useChangeFavoritMutation,
+} = contactApi;

@@ -1,30 +1,19 @@
-import React, {memo, useCallback, useEffect, useState} from 'react';
+import React, {memo} from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {ContactCard} from 'src/components/ContactCard';
-import {useDispatch, useSelector} from "react-redux";
-import {selectContacts} from "src/redux/appReducer/appSelectors";
-import {getContacts} from "src/redux/appReducer/appAction";
-import {AppDispatch} from "src/redux/appReducer/type";
+import {useGetContactsQuery} from "src/api/apiContacts";
+
 
 export const FavoritListPage = memo(() => {
-  const [isFavoritUpdate, setIsFavoritUpdate] = useState<boolean>(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const contacts = useSelector(selectContacts);
+  const {data: contacts} = useGetContactsQuery()
 
-  useEffect(() => {
-    dispatch(getContacts())
-  }, [isFavoritUpdate])
-
-  const updateFavorit = useCallback(() => {
-    setIsFavoritUpdate(prev => !prev);
-  }, [])
 
   return (
     <Row xxl={4} className="g-4">
-      {contacts.map((contact) => {
+      {contacts?.map((contact) => {
         if (contact.isFavorit) {
           return (<Col key={contact.id}>
-            <ContactCard contact={contact} updateFavorit={updateFavorit} withLink />
+            <ContactCard contact={contact} withLink />
           </Col>)
         }
       }

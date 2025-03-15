@@ -1,21 +1,16 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 import {ContactCard} from 'src/components/ContactCard';
-import {useDispatch, useSelector} from "react-redux";
-import {getContact} from "src/redux/appReducer/appAction";
-import {selectContact} from "src/redux/appReducer/appSelectors";
-import {AppDispatch} from "src/redux/appReducer/type";
+import {useGetContactQuery} from "src/api/apiContacts";
+import {skipToken} from "@reduxjs/toolkit/query";
+
 
 
 export const ContactPage = () => {
   const {contactId} = useParams<{ contactId: string }>();
-  const contact = useSelector(selectContact);
-  const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    contactId && dispatch(getContact(contactId));
-  }, [contactId]);
+  const {data: contact} = useGetContactQuery(contactId ? contactId : skipToken)
 
   return (
     <Row xxl={3}>
