@@ -1,22 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {useParams} from 'react-router-dom';
 import {ContactCard} from 'src/components/ContactCard';
-import {useGetContactQuery} from "src/api/apiContacts";
-import {skipToken} from "@reduxjs/toolkit/query";
+import {observer} from "mobx-react";
+import store from "src/mobx/appStore";
 
 
 
-export const ContactPage = () => {
+export const ContactPage = observer(() => {
   const {contactId} = useParams<{ contactId: string }>();
 
-  const {data: contact} = useGetContactQuery(contactId ? contactId : skipToken)
+    useEffect(() => {
+        contactId && store.setContactById(contactId);
+    }, []);
 
   return (
     <Row xxl={3}>
       <Col className={'mx-auto'}>
-        {contact && <ContactCard contact={contact} />}
+        {store.contact && <ContactCard contact={store.contact} />}
       </Col>
     </Row>
   );
-};
+});

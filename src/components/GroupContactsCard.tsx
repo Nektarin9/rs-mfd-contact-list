@@ -4,12 +4,12 @@ import {Link} from 'react-router-dom';
 import {ApiGetGroupContactsType} from "src/api/apiContacts";
 
 interface GroupContactsCardProps {
-  groupContacts: ApiGetGroupContactsType,
+  groupContact: ApiGetGroupContactsType,
   withLink?: boolean
 }
 
 export const GroupContactsCard = memo<GroupContactsCardProps>(({
-    groupContacts: {
+    groupContact: {
       id,
       name,
       description,
