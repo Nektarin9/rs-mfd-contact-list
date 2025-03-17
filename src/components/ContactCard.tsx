@@ -1,7 +1,8 @@
 import React, { memo, useState } from 'react';
 import { Button, Card, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { ApiGetContactsType, useChangeFavoritMutation } from "src/api/apiContacts";
+import { ApiGetContactsType } from "src/api/apiContacts";
+import store from "src/mobx/appStore";
 
 interface ContactCardProps {
   contact: ApiGetContactsType,
@@ -11,13 +12,12 @@ interface ContactCardProps {
 export const ContactCard = memo<ContactCardProps>(({
  contact,
  withLink
-                                                   }) => {
-  const [updateFavorit] = useChangeFavoritMutation();
+}) => {
   const { photo, id, name, phone, birthday, address, isFavorit } = contact;
   const [isUpdate, setIsUpdate] = useState<boolean>(isFavorit);
 
   const changeFavorite = async () => {
-    await updateFavorit({ data: { isFavorit: !isFavorit }, id });
+    await store.updateFavoriteContacts(!isFavorit, id)
     setIsUpdate((prev) => !prev);
   };
 

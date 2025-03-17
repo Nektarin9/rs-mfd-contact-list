@@ -1,17 +1,21 @@
-import React, {memo} from 'react';
+import React, {memo, useEffect} from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {GroupContactsCard} from 'src/components/GroupContactsCard';
-import {useGetGroupContactsQuery} from "src/api/apiContacts";
+import store from "src/mobx/appStore";
+import {observer} from "mobx-react";
 
-export const GroupListPage = memo(() => {
+export const GroupListPage = observer(() => {
 
-  const {data: groupContacts} = useGetGroupContactsQuery()
+
+  useEffect(() => {
+    store.setGroupContacts();
+  }, []);
 
   return (
     <Row xxl={4}>
-      {groupContacts?.map((groupContacts) => (
+      {store.groupContacts?.map((groupContacts) => (
         <Col key={groupContacts.id}>
-          <GroupContactsCard groupContacts={groupContacts} withLink />
+          <GroupContactsCard groupContact={groupContacts} withLink />
         </Col>
       ))}
     </Row>

@@ -6,38 +6,39 @@ import {Empty} from 'src/components/Empty';
 import {ContactCard} from 'src/components/ContactCard';
 import {
   ApiGetContactsType,
-  useGetContactsQuery,
-  useGetGroupContactQuery,
 } from "src/api/apiContacts";
-import {skipToken} from "@reduxjs/toolkit/query";
 
-export const GroupPage = memo(() => {
+import store from "src/mobx/appStore";
+import {observer} from "mobx-react";
+
+export const GroupPage = observer(() => {
   const {groupId} = useParams<{ groupId: string }>();
   const [contactIds, setContactIds] = useState<ApiGetContactsType[]>([]);
 
-  const {data: groupContact} = useGetGroupContactQuery(groupId ? groupId : skipToken)
-  const {data: contacts} = useGetContactsQuery()
 
-
+  useEffect(() => {
+    groupId && store.setContacts()
+    groupId && store.setGroupContactsById(groupId);
+  }, [groupId]);
 
   useEffect(() => {
     setContactIds(() => {
-      if (groupContact) {
-        return contacts?.filter(({id}) => groupContact.contactIds.includes(id)) || []
+      if (store.groupContact) {
+        return store.contacts.filter(({id}) => store.groupContact && store.groupContact.contactIds.includes(id)) || []
       }
       return [];
     });
-  }, [contacts]);
+  }, [store.contacts]);
 
 
   return (
     <Row className="g-4">
-      {groupContact ? (
+      {store.groupContacts ? (
         <>
           <Col xxl={12}>
             <Row xxl={3}>
               <Col className="mx-auto">
-                {groupContact && <GroupContactsCard groupContacts={groupContact} />}
+                {store.groupContact && <GroupContactsCard groupContact={store.groupContact} />}
               </Col>
             </Row>
           </Col>
